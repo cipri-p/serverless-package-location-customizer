@@ -1,0 +1,13 @@
+{
+  "name": "serverless-package-location-customizer",
+  "version": "0.0.1",
+  "description": "A serverless plugin to allow custom S3Bucket and S3Key properties when packaging Lambda Functions and Layers",
+  "main": "src/index.js",
+  "scripts": {},
+  "dependencies": {
+    "lodash": "^4.17.11"
+  },
+  "devDependencies": {},
+  "author": "",
+  "license": "MIT"
+}

@@ -1,0 +1,69 @@
+'use strict'
+const BbPromise = require('bluebird')
+const path = require('path')
+const _ = require('lodash');
+
+class ServerlessPackageLocationCustomizer {
+  constructor(serverless, options) {
+    this.serverless = serverless
+    this.options = options || {}
+    this.provider = this.serverless.getProvider('aws')
+    /*this.service = this.serverless.service.service
+    this.region = this.provider.getRegion()
+    this.stage = this.provider.getStage()*/
+
+    this.commands = {
+      package: {
+        options: {
+          's3-bucket': {
+            usage: 'Specify the name of the deployment bucket'
+          },
+          's3-path': {
+            usage: 'Specify the path to the package in the deployment bucket'
+          }
+        }
+      }
+    }
+
+    this.hooks = {
+      'before:package:initialize': async () => {
+        if (this.options['s3-bucket']) {
+          this.serverless.service.provider.deploymentBucket = this.options['s3-bucket']
+        }
+      },
+      'after:package:compileLayers': async () => {
+        if (!this.options['s3-path']) {
+          return BbPromise.reject(new Error("Missing s3-path option"));
+          //return BbPromise.resolve()
+        }
+
+        return this.updateLayersAndFunctions();
+      }
+    }
+  }
+
+  async updateLayersAndFunctions() {
+    _.each(this.serverless.service.provider.compiledCloudFormationTemplate.Resources, function(res) {
+        if (res.Type === 'AWS::Lambda::LayerVersion') {
+            let layerName = res.Properties.LayerName
+
+            this.serverless.cli.log('Updating Lambda layer '+this.provider.naming.getNormalizedFunctionName(layerName), res);
+
+            let s3FileName = path.basename(res.Properties.Content.S3Key);
+
+            res.Properties.Content.S3Key = this.options['s3-path'] + '/' + s3FileName;
+        } else if (res.Type === 'AWS::Lambda::Function') {
+            let functionName = res.Properties.FunctionName
+            this.serverless.cli.log('Updating Lambda function '+this.provider.naming.getNormalizedFunctionName(functionName), res);
+
+            let s3FileName = path.basename(res.Properties.Code.S3Key);
+
+            res.Properties.Code.S3Key = this.options['s3-path'] + '/' + s3FileName;
+        }
+     }.bind(this));
+  }
+
+
+}
+module.exports = ServerlessPackageLocationCustomizer
+
