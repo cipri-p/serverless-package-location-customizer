@@ -28,5 +28,5 @@ plugins:
 
 Run serverless package command with the following paramters
 
-* _ _--s3-bucket_ _ name of the deployment bucket
-* _ _--s3-path_ _ path to the packaged inside the deployment bucket
+* _--s3-bucket_ name of the deployment bucket
+* _--s3-path_ path to the packaged inside the deployment bucket
