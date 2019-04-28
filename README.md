@@ -34,5 +34,5 @@ Run serverless package command with the following paramters
 ## Example
 
 ```bash
-serverless package --stage production --s3-bucket my-deployment-packages --s3-path /my-product/_{version-number}_/_{build-numer}_/
+serverless package --stage production --s3-bucket my-deployment-packages --s3-path /my-product/v1.2.3-45/
 ```
