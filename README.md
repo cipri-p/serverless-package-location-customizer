@@ -30,3 +30,9 @@ Run serverless package command with the following paramters
 
 * _--s3-bucket_ name of the deployment bucket
 * _--s3-path_ path to the packaged inside the deployment bucket
+
+## Example
+
+```bash
+serverless package --stage production --s3-bucket my-deployment-packages --s3-path /my-product/_{version-number}_/_{build-numer}_/
+```
