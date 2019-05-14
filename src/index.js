@@ -31,7 +31,13 @@ class ServerlessPackageLocationCustomizer {
       'after:package:compileLayers': async () => {
         if (!this.options['s3-path']) {
           return BbPromise.reject(new Error("Missing s3-path option"));
-          //return BbPromise.resolve()
+        }
+
+        return this.updateLayersAndFunctions();
+      },
+      'after:package:compileFunctions': async () => {
+        if (!this.options['s3-path']) {
+          return BbPromise.reject(new Error("Missing s3-path option"));
         }
 
         return this.updateLayersAndFunctions();
