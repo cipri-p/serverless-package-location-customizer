@@ -33,35 +33,36 @@ class ServerlessPackageLocationCustomizer {
           return BbPromise.reject(new Error("Missing s3-path option"));
         }
 
-        return this.updateLayersAndFunctions();
+        return this.updateLayers();
       },
       'after:package:compileFunctions': async () => {
         if (!this.options['s3-path']) {
           return BbPromise.reject(new Error("Missing s3-path option"));
         }
 
-        return this.updateLayersAndFunctions();
+        return this.updateFunctions();
       }
     }
   }
 
-  async updateLayersAndFunctions() {
+  async updateLayers() {
     _.each(this.serverless.service.provider.compiledCloudFormationTemplate.Resources, function(res) {
         if (res.Type === 'AWS::Lambda::LayerVersion') {
-            let layerName = res.Properties.LayerName
+          let layerName = res.Properties.LayerName
+          this.serverless.cli.log('Updating Lambda layer '+this.provider.naming.getNormalizedFunctionName(layerName), res);
+          let s3FileName = path.basename(res.Properties.Content.S3Key);
+          res.Properties.Content.S3Key = this.options['s3-path'] + '/' + s3FileName;
+        }
+     }.bind(this));
+  }
 
-            this.serverless.cli.log('Updating Lambda layer '+this.provider.naming.getNormalizedFunctionName(layerName), res);
-
-            let s3FileName = path.basename(res.Properties.Content.S3Key);
-
-            res.Properties.Content.S3Key = this.options['s3-path'] + '/' + s3FileName;
-        } else if (res.Type === 'AWS::Lambda::Function') {
-            let functionName = res.Properties.FunctionName
-            this.serverless.cli.log('Updating Lambda function '+this.provider.naming.getNormalizedFunctionName(functionName), res);
-
-            let s3FileName = path.basename(res.Properties.Code.S3Key);
-
-            res.Properties.Code.S3Key = this.options['s3-path'] + '/' + s3FileName;
+  async updateFunctions() {
+    _.each(this.serverless.service.provider.compiledCloudFormationTemplate.Resources, function(res) {
+       if (type === 'AWS::Lambda::Function') {
+          let functionName = res.Properties.FunctionName
+          this.serverless.cli.log('Updating Lambda function '+this.provider.naming.getNormalizedFunctionName(functionName), res);
+          let s3FileName = path.basename(res.Properties.Code.S3Key);
+          res.Properties.Code.S3Key = this.options['s3-path'] + '/' + s3FileName;
         }
      }.bind(this));
   }
