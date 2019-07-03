@@ -7,7 +7,7 @@
   "homepage": "https://github.com/cipri-p/serverless-package-location-customizer",
   "dependencies": {
     "lodash": "^4.17.11",
-    "bluebird": "^3.5.0"
+    "bluebird": "^3.5.5"
   },
   "devDependencies": {},
   "author": "",
