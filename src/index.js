@@ -58,7 +58,7 @@ class ServerlessPackageLocationCustomizer {
 
   async updateFunctions() {
     _.each(this.serverless.service.provider.compiledCloudFormationTemplate.Resources, function(res) {
-       if (res.type === 'AWS::Lambda::Function') {
+       if (res.Type === 'AWS::Lambda::Function') {
           let functionName = res.Properties.FunctionName
           this.serverless.cli.log('Updating Lambda function '+this.provider.naming.getNormalizedFunctionName(functionName), res);
           let s3FileName = path.basename(res.Properties.Code.S3Key);
