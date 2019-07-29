@@ -1,12 +1,12 @@
 {
   "name": "serverless-package-location-customizer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A serverless plugin to allow custom S3Bucket and S3Key properties when packaging Lambda Functions and Layers",
   "main": "src/index.js",
   "scripts": {},
   "homepage": "https://github.com/cipri-p/serverless-package-location-customizer",
   "dependencies": {
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "bluebird": "^3.5.5"
   },
   "devDependencies": {},
