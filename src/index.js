@@ -43,6 +43,13 @@ class ServerlessPackageLocationCustomizer {
         }
 
         return this.updateFunctions();
+      },
+      'after:package:compileEvents': async () => {
+        if (!this.options['s3-path']) {
+          return BbPromise.reject(new Error("Missing s3-path option"));
+        }
+
+        return this.updateEvents();
       }
     }
   }
@@ -65,6 +72,21 @@ class ServerlessPackageLocationCustomizer {
           this.serverless.cli.log('Updating Lambda function '+this.provider.naming.getNormalizedFunctionName(functionName), res);
           let s3FileName = path.basename(res.Properties.Code.S3Key);
           res.Properties.Code.S3Key = this.options['s3-path'] + '/' + s3FileName;
+        }
+     }.bind(this));
+    }
+
+  async updateEvents() {
+    _.each(this.serverless.service.provider.compiledCloudFormationTemplate.Resources, function(res) {
+       if (res.Type === 'AWS::Lambda::Function') {
+          let s3FileName = path.basename(res.Properties.Code.S3Key);
+          
+          // Skip if not custom resources Lambda
+          if (s3FileName === this.provider.naming.getCustomResourcesArtifactName()) {
+            let functionName = res.Properties.FunctionName
+            this.serverless.cli.log('Updating Lambda function '+this.provider.naming.getNormalizedFunctionName(functionName), res);
+            res.Properties.Code.S3Key = this.options['s3-path'] + '/' + s3FileName;
+          }
         }
      }.bind(this));
   }
