@@ -13,10 +13,12 @@ class ServerlessPackageLocationCustomizer {
       package: {
         options: {
           's3-bucket': {
-            usage: 'Specify the name of the deployment bucket'
+            usage: 'Specify the name of the deployment bucket',
+            type: 'string'
           },
           's3-path': {
-            usage: 'Specify the path to the package in the deployment bucket'
+            usage: 'Specify the path to the package in the deployment bucket',
+            type: 'string'
           }
         }
       }
